@@ -1,0 +1,17 @@
+{
+  "name": "bank_data",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cli-table": "^0.3.1",
+    "csvtojson": "^1.1.7",
+    "ramda": "^0.24.1"
+  }
+}
