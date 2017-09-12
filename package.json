@@ -1,17 +1,41 @@
 {
-  "name": "bank_data",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "bank-a-data",
+  "version": "0.0.1",
+  "private": false,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack",
+    "dev": "webpack -w",
+    "start": "node ./bin/www"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
+  "license": "MIT",
+  "author": "Ivan Demchenko <raqy.style@gmail.com>",
+  "dependencies": {
+    "body-parser": "~1.17.1",
     "cli-table": "^0.3.1",
+    "cookie-parser": "~1.4.3",
     "csvtojson": "^1.1.7",
-    "ramda": "^0.24.1"
+    "debug": "~2.6.3",
+    "express": "~4.15.2",
+    "morgan": "~1.8.1",
+    "pug": "~2.0.0-beta11",
+    "ramda": "^0.24.1",
+    "serve-favicon": "~2.4.2"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "babel-preset-env": "^1.6.0",
+    "css-loader": "^0.28.7",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "redux": "^3.7.2",
+    "redux-observable": "^0.16.0",
+    "rxjs": "^5.4.3",
+    "style-loader": "^0.18.2",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.1",
+    "webpack": "^3.5.6"
   }
 }
