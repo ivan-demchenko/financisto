@@ -6,6 +6,14 @@ let data = [];
 const csvFilePath = path.join(__dirname, '../..', 'Downloads/trdata.csv');
 const guessCategory = require('./categoriser');
 
+const parseCSV = r.compose(
+    r.converge(r.map, [
+        r.compose(r.zipObj, r.split(','), r.head),
+        r.compose(r.split(','), r.tail)
+    ]),
+    r.split('\n')
+)
+
 const app =
 r.pipe(
     r.map(r.evolve({
