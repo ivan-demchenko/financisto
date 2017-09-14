@@ -11,9 +11,7 @@
   "author": "Ivan Demchenko <raqy.style@gmail.com>",
   "dependencies": {
     "body-parser": "~1.17.1",
-    "cli-table": "^0.3.1",
     "cookie-parser": "~1.4.3",
-    "csvtojson": "^1.1.7",
     "debug": "~2.6.3",
     "express": "~4.15.2",
     "morgan": "~1.8.1",
