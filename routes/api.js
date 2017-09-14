@@ -1,8 +1,11 @@
 var express = require('express');
 var router = express.Router();
 
-router.get('/all', function(req, res, next) {
-  res.send('respond with a resource');
+var transformer = require('../service/main');
+
+router.post('/csv', (req, res, next) => {
+  console.log(req.body);
+  res.json(transformer(req.body.csv));
 });
 
 module.exports = router;

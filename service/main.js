@@ -10,8 +10,7 @@ const parseCSV = r.compose(
     r.split('\n')
 )
 
-const app =
-r.pipe(
+module.exports = r.pipe(
     parseCSV,
     r.map(r.evolve({
         Narrative: r.compose(r.trim, r.replace('DEBIT CARD PURCHASE', '')),
