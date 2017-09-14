@@ -1,7 +1,5 @@
 const path = require('path');
 const r = require('ramda');
-const fs = require('fs');
-const csvFilePath = path.join(__dirname, '../..', 'Downloads/trdata.csv');
 const guessCategory = require('./categoriser');
 
 const parseCSV = r.compose(
@@ -14,7 +12,6 @@ const parseCSV = r.compose(
 
 const app =
 r.pipe(
-    fs.readFileSync,
     parseCSV,
     r.map(r.evolve({
         Narrative: r.compose(r.trim, r.replace('DEBIT CARD PURCHASE', '')),
@@ -66,11 +63,4 @@ r.pipe(
     r.map(r.map(
         r.compose(r.sum, r.pluck('Amount'))
     ))
-)
-
-csv()
-.fromFile(csvFilePath)
-.on('json', x => data.push(x))
-.on('done', () => {
-    console.log(app(data));
-});
+);
