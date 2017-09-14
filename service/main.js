@@ -1,8 +1,6 @@
-const csv = require('csvtojson');
 const path = require('path');
 const r = require('ramda');
-const Table = require('cli-table');
-let data = [];
+const fs = require('fs');
 const csvFilePath = path.join(__dirname, '../..', 'Downloads/trdata.csv');
 const guessCategory = require('./categoriser');
 
@@ -16,6 +14,8 @@ const parseCSV = r.compose(
 
 const app =
 r.pipe(
+    fs.readFileSync,
+    parseCSV,
     r.map(r.evolve({
         Narrative: r.compose(r.trim, r.replace('DEBIT CARD PURCHASE', '')),
         'Debit Amount': r.compose(r.multiply(-1), Number),
