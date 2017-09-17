@@ -4,6 +4,7 @@ import { combineEpics, createEpicMiddleware } from 'redux-observable';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import { Component } from 'react';
+import "./App.styl";
 
 import CSVInput, { reducer as CSVInputReducer, sendDataEpic } from './CSVInput';
 
