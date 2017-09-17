@@ -1,19 +1,7 @@
 const path = require('path');
 const r = require('ramda');
 const guessCategory = require('./categoriser');
-
-const parseCSV = r.compose(
-    r.converge(r.map, [
-        r.compose(
-            r.zipObj, r.split(','), r.init, r.head
-        ),
-        r.compose(
-            r.map(r.compose(r.map(r.replace(/\"/gi, '')), r.split(','), r.init)), r.tail
-        )
-    ]),
-    r.split('\n'),
-    r.trim
-)
+const parseCSV = require('./csvParser');
 
 const normaliseNarrative = 
     r.map(r.evolve({
