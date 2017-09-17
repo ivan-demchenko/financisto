@@ -5,7 +5,7 @@
   "scripts": {
     "build": "webpack",
     "dev": "webpack -w",
-    "start": "node ./bin/www"
+    "start": "nodemon ./bin/www"
   },
   "license": "MIT",
   "author": "Ivan Demchenko <raqy.style@gmail.com>",
@@ -27,6 +27,7 @@
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-preset-env": "^1.6.0",
     "css-loader": "^0.28.7",
+    "nodemon": "^1.12.1",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "redux": "^3.7.2",
@@ -36,5 +37,19 @@
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
     "webpack": "^3.5.6"
+  },
+  "nodemonConfig": {
+    "verbose": true,
+    "ignore": ["app/*", "bin/*", "public/*"],
+    "delay": "1500",
+    "watch": [
+      "service/",
+      "routes",
+      "views/",
+      "app.js"
+    ],
+    "env": {
+      "NODE_ENV": "development"
+    }
   }
 }
