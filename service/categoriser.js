@@ -22,7 +22,7 @@ module.exports = r.cond([
     [ r.test(/KATHMANDU|99 BIKES/ig)
     , r.always('Sports')
     ],
-    [ r.test(/TPG Internet/ig)
+    [ r.test(/TPG Internet|AMAYSIM/ig)
     , r.always('Internet/Mobile')
     ],
     [ r.test(/OPAL|ETOLL|CABS/ig)
