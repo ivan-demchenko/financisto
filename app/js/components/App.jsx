@@ -7,10 +7,12 @@ import { Component } from 'react';
 import "./App.styl";
 
 import CSVInput, { reducer as CSVInputReducer, sendDataEpic } from './CSVInput';
+import GroupedData, { reducer as GroupedDataReducer } from './GroupedData';
 
 const epicMiddleware = createEpicMiddleware(sendDataEpic);
 const rootReducer = combineReducers({
-    csvInput: CSVInputReducer
+    csvInput: CSVInputReducer,
+    groupedData: GroupedDataReducer
 });
 const rootStore = createStore(
     rootReducer,
@@ -25,6 +27,7 @@ export default class App extends Component {
                 <header className="header">Financier</header>
                 <main className="main-content">
                     <CSVInput />
+                    <GroupedData />
                 </main>
                 <footer className="footer">Copyright &copy; Ivan Demchenko</footer>
             </div>
