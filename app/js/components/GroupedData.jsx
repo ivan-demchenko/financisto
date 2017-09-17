@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { merge } from 'ramda';
+import r from 'ramda';
 import "./GroupedData.styl";
 
 const receivedGroupedData = (data) => ({
@@ -13,7 +13,6 @@ const initial = {
 };
 
 export const reducer = (state = initial, action) => {
-    console.log(action)
     switch(action.type) {
         case 'POST_CSV_SUCCESS':
             return { data: action.data };
@@ -26,7 +25,7 @@ export const reducer = (state = initial, action) => {
 
 const view = (state) =>
     <div className="grouped-data">
-        <pre>{JSON.stringify(state.data, null, 2)}</pre>
+        <pre>{JSON.stringify(state.data.grouped, null, 2)}</pre>
     </div>;
 
 export default connect(
