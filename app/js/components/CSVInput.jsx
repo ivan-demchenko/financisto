@@ -2,6 +2,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { fromPromise } from 'rxjs/observable/fromPromise';
 import { merge } from 'ramda';
+import "./CSVInput.styl";
 
 const editCSV = (code) => ({
     type: 'EDIT_CSV',
@@ -35,7 +36,7 @@ export const sendDataEpic = (action$) =>
                 })
             }))
         )
-        .do(resp => console.log(resp))
+        .flatMap(resp => fromPromise(resp.json()))
         .map(receivedFeedback)
 
 export const reducer = (state = initial, action) => {
@@ -56,9 +57,13 @@ export const reducer = (state = initial, action) => {
 };
 
 const view = (state) =>
-    <div>
-        <textarea onChange={(e) => state.editCSV(e.target.value)} value={state.code}></textarea>
-        <button onClick={() => state.postCSV(state.code)}>Do it!</button>
+    <div className="csv-input">
+        <textarea className="csv-input__source"
+            onChange={(e) => state.editCSV(e.target.value)} value={state.code}></textarea>
+        <div className="csv-input__action-bar">
+            <button className="csv-input__action"
+                onClick={() => state.postCSV(state.code)}>Do it!</button>
+        </div>
     </div>;
 
 export default connect(
