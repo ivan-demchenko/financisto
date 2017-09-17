@@ -20,10 +20,6 @@ const cleanUpFields =
 
 const normaliseAmounts =
     r.compose(
-        r.map(r.evolve({
-            'Debit Amount': r.compose(r.multiply(-1), Number),
-            'Credit Amount': Number
-        })),
         r.map(
             r.converge(r.merge, [
                 r.identity,
@@ -36,6 +32,10 @@ const normaliseAmounts =
                 )
             ])
         ),
+        r.map(r.evolve({
+            'Debit Amount': r.compose(r.multiply(-1), Number),
+            'Credit Amount': Number
+        }))
     );
 
 const groupByMonth = 
@@ -72,6 +72,8 @@ const sumByAmount =
 
 const filterUnknownCategory =
     r.filter(r.whereEq( { Category: 'Unknown' } ))
+
+const sortByKey = r.sortBy()
  
 const groupByMonthAndCategory = r.pipe(
     parseCSV,
