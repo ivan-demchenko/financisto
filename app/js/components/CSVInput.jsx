@@ -25,9 +25,15 @@ const initial = {
 export const sendDataEpic = (action$) =>
     action$.ofType('POST_CSV')
         .flatMap(action => 
-            fromPromise(fetch('/api/csv', { method: 'POST', body: JSON.stringify({
-                csv: action.code
-            })}))
+            fromPromise(fetch('/api/csv', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    csv: action.code
+                })
+            }))
         )
         .do(resp => console.log(resp))
         .map(receivedFeedback)
