@@ -1,5 +1,21 @@
+@import "../../styles/palette.styl"
+
 .grouped-data
-    border-top: solid 2px $divider-color
+    border-top: solid 2px divider-color
     padding: 1rem
     display: flex
     flex: 2 0 auto
+    flex-direction: column
+
+.gd-categories
+    margin-bottom: 1rem
+
+.gd-category
+    display: flex
+    padding: .1rem 0
+    border-bottom: dashed 1px divider-color
+
+.gd-category__name
+    flex: 0 0 15rem
+    color: secondary-text-color
+    text-decoration: none
