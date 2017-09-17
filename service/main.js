@@ -15,25 +15,12 @@ const parseCSV = r.compose(
     r.trim
 )
 
-module.exports = r.pipe(
-    parseCSV,
+const normaliseNarrative = 
     r.map(r.evolve({
-        Narrative: r.compose(r.trim, r.replace('DEBIT CARD PURCHASE', '')),
-        'Debit Amount': r.compose(r.multiply(-1), Number),
-        'Credit Amount': Number
-    })),
-    r.map(
-        r.converge(r.merge, [
-            r.identity,
-            r.compose(
-                r.objOf('Amount'),
-                r.converge(r.add, [
-                    r.prop('Debit Amount'),
-                    r.prop('Credit Amount')
-                ])
-            )
-        ])
-    ),
+        Narrative: r.compose(r.trim, r.replace('DEBIT CARD PURCHASE', ''))
+    }));
+
+const cleanUpFields =
     r.map(
         r.compose(
             r.dissoc('Bank Account'),
@@ -41,7 +28,43 @@ module.exports = r.pipe(
             r.dissoc('Debit Amount'),
             r.dissoc('Credit Amount')
         )
-    ),
+    );
+
+const normaliseAmounts =
+    r.compose(
+        r.map(r.evolve({
+            'Debit Amount': r.compose(r.multiply(-1), Number),
+            'Credit Amount': Number
+        })),
+        r.map(
+            r.converge(r.merge, [
+                r.identity,
+                r.compose(
+                    r.objOf('Amount'),
+                    r.converge(r.add, [
+                        r.prop('Debit Amount'),
+                        r.prop('Credit Amount')
+                    ])
+                )
+            ])
+        ),
+    );
+
+const groupByMonth = 
+    r.groupBy(
+        r.pipe(
+            r.prop('Date'),
+            r.split('/'),
+            r.nth(1)
+        )
+    );
+
+const groupByCategory =
+    r.map(
+        r.groupBy(r.prop('Category'))
+    );
+
+const applyCategoriser =
     r.map(
         r.converge(r.merge, [
             r.identity,
@@ -52,19 +75,20 @@ module.exports = r.pipe(
                 r.objOf('Category'),
             )
         ])
-    ),
-    r.groupBy(
-        r.pipe(
-            r.prop('Date'),
-            r.split('/'),
-            r.nth(1)
-        )
-    ),
-    r.map(
-        r.groupBy(r.prop('Category'))
-    ),
-    
+    );
+
+const sumByAmount =
     r.map(r.map(
         r.compose(r.sum, r.pluck('Amount'))
-    ))
+    ));
+
+module.exports = r.pipe(
+    parseCSV,
+    normaliseNarrative,
+    normaliseAmounts,
+    cleanUpFields,
+    applyCategoriser,
+    groupByMonth,
+    groupByCategory,
+    sumByAmount
 );
