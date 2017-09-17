@@ -70,7 +70,10 @@ const sumByAmount =
         r.compose(r.sum, r.pluck('Amount'))
     ));
 
-module.exports = r.pipe(
+const filterUnknownCategory =
+    r.filter(r.whereEq( { Category: 'Unknown' } ))
+ 
+const groupByMonthAndCategory = r.pipe(
     parseCSV,
     normaliseNarrative,
     normaliseAmounts,
@@ -80,3 +83,15 @@ module.exports = r.pipe(
     groupByCategory,
     sumByAmount
 );
+
+const returnUnknownsOnly = r.pipe(
+    parseCSV,
+    normaliseNarrative,
+    applyCategoriser,
+    filterUnknownCategory
+);
+
+module.exports = {
+    groupByMonthAndCategory,
+    returnUnknownsOnly
+}
