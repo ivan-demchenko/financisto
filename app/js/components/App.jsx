@@ -1,37 +1,22 @@
-import 'rxjs';
 import * as React from 'react';
-import { combineEpics, createEpicMiddleware } from 'redux-observable';
-import { combineReducers, createStore, applyMiddleware } from 'redux';
-import { Provider } from 'react-redux';
-import { Component } from 'react';
+import { Route } from 'react-router-dom';
+import Home from './Home';
+import CSVInput from './CSVInput';
+import Report from './GroupedData';
 import "./App.styl";
 
-import CSVInput, { reducer as CSVInputReducer, sendDataEpic } from './CSVInput';
-import GroupedData, { reducer as GroupedDataReducer } from './GroupedData';
-
-const epicMiddleware = createEpicMiddleware(sendDataEpic);
-const rootReducer = combineReducers({
-    csvInput: CSVInputReducer,
-    groupedData: GroupedDataReducer
-});
-const rootStore = createStore(
-    rootReducer,
-    applyMiddleware(epicMiddleware)
-);
-
-export default class App extends Component {
+export default class App extends React.PureComponent {
     render() {
         return (
-            <Provider store={rootStore}>
             <div className="container">
                 <header className="header">Financier</header>
                 <main className="main-content">
-                    <CSVInput />
-                    <GroupedData />
+                    <Route path="/" component={Home}/>
+                    <Route path="/upload" component={CSVInput} />
+                    <Route path="/report" component={Report} />
                 </main>
                 <footer className="footer">Copyright &copy; Ivan Demchenko</footer>
             </div>
-            </Provider>
         );
     }
 }
