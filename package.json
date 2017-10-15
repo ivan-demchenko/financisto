@@ -5,7 +5,7 @@
   "scripts": {
     "build": "webpack",
     "dev": "webpack -w",
-    "start": "nodemon ./bin/www"
+    "start": "nodemon ./bin/www & npm run dev"
   },
   "license": "MIT",
   "author": "Ivan Demchenko <raqy.style@gmail.com>",
@@ -40,7 +40,11 @@
   },
   "nodemonConfig": {
     "verbose": true,
-    "ignore": ["app/*", "bin/*", "public/*"],
+    "ignore": [
+      "app/*",
+      "bin/*",
+      "public/*"
+    ],
     "delay": "1500",
     "watch": [
       "service/",
@@ -49,6 +53,7 @@
       "app.js"
     ],
     "env": {
+      "DEBUG": "bank-data",
       "NODE_ENV": "development"
     }
   }

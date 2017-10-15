@@ -4,8 +4,10 @@ import { fromPromise } from 'rxjs/observable/fromPromise';
 import { merge } from 'ramda';
 import "./CSVInput.styl";
 
+const EDIT_CSV = 'EDIT_CSV';
+
 const editCSV = (code) => ({
-    type: 'EDIT_CSV',
+    type: EDIT_CSV,
     code
 });
 
@@ -41,7 +43,7 @@ export const sendDataEpic = (action$) =>
 
 export const reducer = (state = initial, action) => {
     switch(action.type) {
-        case 'EDIT_CSV':
+        case EDIT_CSV:
             return merge(state, {code: action.code});
 
         case 'POST_CSV':
