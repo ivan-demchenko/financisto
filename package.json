@@ -27,6 +27,7 @@
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-preset-env": "^1.6.0",
     "css-loader": "^0.28.7",
+    "mongodb": "^2.2.33",
     "nodemon": "^1.12.1",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
@@ -50,10 +51,11 @@
       "service/",
       "routes",
       "views/",
-      "app.js"
+      "app.js",
+      "package.json"
     ],
     "env": {
-      "DEBUG": "bank-data",
+      "DEBUG": "financier",
       "NODE_ENV": "development"
     }
   }
