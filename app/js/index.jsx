@@ -6,7 +6,6 @@ import { BrowserRouter, Route } from 'react-router-dom';
 import { combineEpics, createEpicMiddleware } from 'redux-observable';
 import { combineReducers, createStore, applyMiddleware } from 'redux';
 import App from './components/App';
-import Home from './components/Home';
 import { reducer as CSVInputReducer, sendDataEpic } from './components/CSVInput';
 import { reducer as GroupedDataReducer } from './components/GroupedData';
 
