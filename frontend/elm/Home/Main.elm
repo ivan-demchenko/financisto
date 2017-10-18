@@ -33,5 +33,8 @@ view : Model -> Html Msg
 view model =
     div []
         [ text model.text
-        , a [ href "/#login" ] [ text "login" ]
+        , ul []
+            [ li [] [ a [ href "/#login" ] [ text "Login" ] ]
+            , li [] [ a [ href "/#upload" ] [ text "Upload" ] ]
+            ]
         ]

@@ -7,6 +7,7 @@ import UrlParser exposing (..)
 type Route
     = HomeRoute
     | LoginRoute
+    | UploadRoute
     | NotFoundRoute
 
 
@@ -15,6 +16,7 @@ matchers =
     oneOf
         [ map HomeRoute top
         , map LoginRoute (s "login")
+        , map UploadRoute (s "upload")
         ]
 
 

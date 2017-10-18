@@ -7,6 +7,7 @@ import Models exposing (Model)
 import Routing exposing (Route(..))
 import Login.Main as LoginModule
 import Home.Main as HomeModule
+import Upload.Main as UploadModule
 
 
 view : Model -> Html Msg
@@ -28,6 +29,9 @@ page model =
 
         HomeRoute ->
             Html.map HomeMsg (HomeModule.view model.home)
+
+        UploadRoute ->
+            Html.map UploadMsg (UploadModule.view model.upload)
 
         NotFoundRoute ->
             notFoundView

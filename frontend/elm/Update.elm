@@ -5,6 +5,7 @@ import Models exposing (Model)
 import Messages exposing (..)
 import Home.Main as Home
 import Login.Main as Login
+import Upload.Main as Upload
 
 
 update : Msg -> Model -> ( Model, Cmd msg )
@@ -30,3 +31,10 @@ update msg model =
                     Login.update loginMsg model.home
             in
                 ( { model | home = newLoginModel }, Cmd.none )
+
+        UploadMsg uploadMsg ->
+            let
+                ( newUploadModel, uploadFx ) =
+                    Upload.update uploadMsg model.upload
+            in
+                ( { model | upload = newUploadModel }, Cmd.none )
