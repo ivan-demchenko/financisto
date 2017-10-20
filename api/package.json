@@ -1,0 +1,45 @@
+{
+  "name": "financisto",
+  "version": "0.1.0",
+  "private": false,
+  "description": "A pet project, mainly for experiments and for analysing personal finances",
+  "repository": {
+    "git": "none"
+  },
+  "scripts": {
+    "start": "nodemon ./bin/www"
+  },
+  "license": "MIT",
+  "author": "Ivan Demchenko <raqy.style@gmail.com>",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "cookie-parser": "~1.4.3",
+    "debug": "^3.1.0",
+    "express": "^4.16.2",
+    "jest": "^21.2.1",
+    "mongodb": "^2.2.33",
+    "morgan": "~1.9.0",
+    "nodemon": "^1.12.1",
+    "fantasy-readers": "0.0.1",
+    "mongoose": "^4.12.3",
+    "ramda": "^0.25.0"
+  },
+  "jest": {
+    "verbose": true,
+    "testRegex": "\\.test.js$"
+  },
+  "nodemonConfig": {
+    "verbose": true,
+    "delay": "1500",
+    "watch": [
+      "."
+    ],
+    "env": {
+      "DEBUG": "financisto",
+      "NODE_ENV": "development"
+    }
+  },
+  "devDependencies": {
+    "supertest": "^3.0.0"
+  }
+}

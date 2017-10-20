@@ -16,7 +16,7 @@ const isDev = TARGET_ENV == dev;
 const isProd = TARGET_ENV == prod;
 
 // entry and output path/filename variables
-const entryPath = path.join(__dirname, 'frontend/static/index.js');
+const entryPath = path.join(__dirname, 'static/index.js');
 const outputPath = path.join(__dirname, 'public');
 const outputFilename = isProd ? '[name]-[hash].js' : '[name].js'
 
@@ -46,7 +46,7 @@ var commonConfig = {
             }
         }),
         new HtmlWebpackPlugin({
-            template: 'frontend/static/index.html',
+            template: 'static/index.html',
             inject: 'body',
             filename: 'index.html'
         })
@@ -63,7 +63,7 @@ if (isDev === true) {
         devServer: {
             // serve index.html in place of 404 responses
             historyApiFallback: true,
-            contentBase: './frontend',
+            contentBase: './',
             hot: true
         },
         module: {
@@ -109,10 +109,10 @@ if (isProd === true) {
                 allChunks: true,
             }),
             new CopyWebpackPlugin([{
-                from: 'frontend/static/img/',
-                to: 'public/img/'
+                from: 'static/img/',
+                to: 'img/'
             }, {
-                from: 'frontend/favicon.ico'
+                from: 'favicon.ico'
             }]),
 
             // extract CSS into a separate file

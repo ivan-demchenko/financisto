@@ -1,11 +1,11 @@
 version: '3'
 services:
-  application:
-    build: .
+  api:
+    build: ./api
     ports:
       - "3000:3000"
     volumes:
-      - .:/app
+      - ./api:/app
   mongodb:
     image: 'mongo:3.0.15'
     volumes:
