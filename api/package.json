@@ -35,7 +35,7 @@
       "."
     ],
     "env": {
-      "DEBUG": "financisto",
+      "DEBUG": "financisto:*",
       "NODE_ENV": "development"
     }
   },
