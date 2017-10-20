@@ -8,7 +8,7 @@ import Login.Main as Login
 import Upload.Main as Upload
 
 
-update : Msg -> Model -> ( Model, Cmd msg )
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         OnLocationChange location ->
@@ -23,18 +23,18 @@ update msg model =
                 ( newHomeModel, homeFx ) =
                     Home.update homeMsg model.home
             in
-                ( { model | home = newHomeModel }, Cmd.none )
+                ( { model | home = newHomeModel }, Cmd.map HomeMsg homeFx )
 
         LoginMsg loginMsg ->
             let
-                ( newLoginModel, homeFx ) =
+                ( newLoginModel, loginFx ) =
                     Login.update loginMsg model.home
             in
-                ( { model | home = newLoginModel }, Cmd.none )
+                ( { model | login = newLoginModel }, Cmd.map LoginMsg loginFx )
 
         UploadMsg uploadMsg ->
             let
                 ( newUploadModel, uploadFx ) =
                     Upload.update uploadMsg model.upload
             in
-                ( { model | upload = newUploadModel }, Cmd.none )
+                ( { model | upload = newUploadModel }, Cmd.map UploadMsg uploadFx )

@@ -34,7 +34,9 @@ view model =
     div []
         [ text model.text
         , ul []
-            [ li [] [ a [ href "/#login" ] [ text "Login" ] ]
-            , li [] [ a [ href "/#upload" ] [ text "Upload" ] ]
+            [ li []
+                [ a [ href "/#login" ] [ text "Login" ] ]
+            , li []
+                [ a [ href "/#upload" ] [ text "Upload" ] ]
             ]
         ]

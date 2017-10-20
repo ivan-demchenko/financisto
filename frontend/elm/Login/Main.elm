@@ -1,7 +1,7 @@
 module Login.Main exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (..)
+import Html.Events exposing (onClick)
 import Navigation
 
 
@@ -33,5 +33,5 @@ view : Model -> Html Msg
 view model =
     div []
         [ text model.text
-        , a [ href "/" ] [ text "Home" ]
+        , button [ onClick GoToHome ] [ text "Go Home" ]
         ]
