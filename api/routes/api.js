@@ -9,7 +9,7 @@ var UserData = require('../models/userData');
 
 router.post('/csv', jsonParser, (req, res, next) => {
 
-  debug('Received some data to /csv');
+  debug('Received some data to /csv, %j', req.body);
 
   res.json({
     data: req.body.data

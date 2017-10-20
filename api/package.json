@@ -34,6 +34,9 @@
     "watch": [
       "."
     ],
+    "ignore": [
+      "_logs/"
+    ],
     "env": {
       "DEBUG": "financisto:*",
       "NODE_ENV": "development"
