@@ -14,7 +14,6 @@ type alias Model =
 type Msg
     = Noop
     | GoToHome
-    | GoToLogin
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -25,9 +24,6 @@ update msg model =
 
         GoToHome ->
             ( model, Navigation.newUrl "#" )
-
-        GoToLogin ->
-            ( model, Navigation.newUrl "#login" )
 
 
 view : Model -> Html Msg
@@ -43,9 +39,6 @@ view model =
             , button
                 [ class "csv-input__action", onClick GoToHome ]
                 [ text "Go home" ]
-            , button
-                [ class "csv-input__action", onClick GoToLogin ]
-                [ text "Go to login" ]
             ]
         ]
 

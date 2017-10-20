@@ -1,6 +1,6 @@
 module View exposing (..)
 
-import Html exposing (Html, div, text, header, footer)
+import Html exposing (Html, span, div, text, header, footer)
 import Html.Attributes exposing (class)
 import Messages exposing (Msg(..))
 import Models exposing (Model)
@@ -8,12 +8,16 @@ import Routing exposing (Route(..))
 import Login.Main as LoginModule
 import Home.Main as HomeModule
 import Upload.Main as UploadModule
+import Navigation.Main as NavModule
 
 
 view : Model -> Html Msg
 view model =
     div [ class "container" ]
-        [ header [ class "header" ] [ text "Financisto" ]
+        [ header [ class "header" ]
+            [ span [ class "logo" ] [ text "Financisto" ]
+            , Html.map NavigationMsg NavModule.view
+            ]
         , div [ class "main-content" ]
             [ page model
             ]
@@ -37,7 +41,7 @@ page model =
             notFoundView
 
 
-notFoundView : Html msg
+notFoundView : Html Msg
 notFoundView =
     div [ class "not-found" ]
         [ text "Not found"

@@ -6,6 +6,7 @@ import Messages exposing (..)
 import Home.Main as Home
 import Login.Main as Login
 import Upload.Main as Upload
+import Navigation.Main as NavModule
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -38,3 +39,6 @@ update msg model =
                     Upload.update uploadMsg model.upload
             in
                 ( { model | upload = newUploadModel }, Cmd.map UploadMsg uploadFx )
+
+        NavigationMsg navMsg ->
+            ( model, NavModule.goto navMsg )
