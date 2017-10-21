@@ -3,17 +3,37 @@ module Upload.Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (class)
 import Html.Events exposing (onClick)
+import Http
+import Json.Decode as JD
+import Json.Encode as JE
 import Navigation
 
 
 type alias Model =
     { text : String
+    , uploadError : Maybe String
     }
 
 
 type Msg
     = Noop
+    | TriggerDataSent
+    | DataPostage (Result Http.Error String)
     | GoToHome
+
+
+postCSVData : String -> Cmd Msg
+postCSVData csvString =
+    let
+        url =
+            "http://localhost:3000/api/csv"
+
+        reqBody =
+            Http.jsonBody <|
+                JE.object
+                    [ ( "csv", JE.string csvString ) ]
+    in
+        Http.send DataPostage <| Http.post url reqBody JD.string
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -22,8 +42,27 @@ update msg model =
         Noop ->
             ( model, Cmd.none )
 
+        DataPostage (Ok data) ->
+            ( { model | text = data }, Cmd.none )
+
+        TriggerDataSent ->
+            ( model, (postCSVData model.text) )
+
+        DataPostage (Err _) ->
+            ( { model | uploadError = Just "Error" }, Cmd.none )
+
         GoToHome ->
             ( model, Navigation.newUrl "#" )
+
+
+renderUploadError : Maybe String -> Html Msg
+renderUploadError str =
+    case str of
+        Just msg ->
+            div [] [ text msg ]
+
+        Nothing ->
+            div [] []
 
 
 view : Model -> Html Msg
@@ -31,13 +70,18 @@ view model =
     div [ class "csv-input" ]
         [ h3 [] [ text "Please, paste the CSV data here:" ]
         , textarea [ class "csv-input__source" ] []
+        , (renderUploadError model.uploadError)
         , div
             [ class "csv-input__action-bar" ]
             [ button
-                [ class "csv-input__action" ]
+                [ class "csv-input__action"
+                , onClick TriggerDataSent
+                ]
                 [ text "Upload the data" ]
             , button
-                [ class "csv-input__action", onClick GoToHome ]
+                [ class "csv-input__action"
+                , onClick GoToHome
+                ]
                 [ text "Go home" ]
             ]
         ]
@@ -45,4 +89,4 @@ view model =
 
 init : Model
 init =
-    Model ""
+    Model "" Nothing

@@ -7,26 +7,29 @@
     "git": "none"
   },
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "start": "nodemon ./bin/www",
+    "test": "jest"
   },
   "license": "MIT",
   "author": "Ivan Demchenko <raqy.style@gmail.com>",
   "dependencies": {
     "body-parser": "^1.18.2",
     "cookie-parser": "~1.4.3",
+    "data.task": "^3.1.1",
     "debug": "^3.1.0",
     "express": "^4.16.2",
+    "fantasy-readers": "0.0.1",
     "jest": "^21.2.1",
     "mongodb": "^2.2.33",
+    "mongoose": "^4.12.3",
     "morgan": "~1.9.0",
     "nodemon": "^1.12.1",
-    "fantasy-readers": "0.0.1",
-    "mongoose": "^4.12.3",
     "ramda": "^0.25.0"
   },
   "jest": {
     "verbose": true,
-    "testRegex": "\\.test.js$"
+    "testRegex": "\\.test.js$",
+    "cacheDirectory": "./_jest_cache"
   },
   "nodemonConfig": {
     "verbose": true,

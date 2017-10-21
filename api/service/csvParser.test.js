@@ -5,8 +5,8 @@ describe('parse a file', () => {
 
         const sampleData = [
             "Bank Account,Date,Notes",
-            "123,09/10/2017,\"Some comments\"",
-            "123,07/11/2017,\"Other comments\""
+            "123,09/10/2017,\"Some comments\",",
+            "123,07/11/2017,\"Other comments\","
         ].join("\n");
 
         expect(parseCSV(sampleData)).toEqual([
