@@ -9,5 +9,7 @@ services:
       - ./api/_logs:/app/_logs
   mongodb:
     image: 'mongo:3.0.15'
+    ports:
+      - "27017:27017"
     volumes:
       - ./dbdata:/data/db

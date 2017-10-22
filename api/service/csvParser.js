@@ -7,7 +7,7 @@ module.exports = r.compose(
         ),
         r.compose(
             r.map(
-                r.compose(r.map(r.replace(/\"/gi, '')), r.split(','), r.init)
+                r.compose(r.map(r.replace(/\"/gi, '')), r.split(','))
             ),
             r.tail
         )

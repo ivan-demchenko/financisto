@@ -4,14 +4,30 @@ describe('parse a file', () => {
     it('should return an array of object when there are records', () => {
 
         const sampleData = [
-            "Bank Account,Date,Notes",
-            "123,09/10/2017,\"Some comments\",",
-            "123,07/11/2017,\"Other comments\","
+            'Bank Account,Date,Narrative,Debit Amount,Credit Amount,Categories,Serial',
+            '123,09/10/2017,"WITHDRAWAL ....",70.00,,CASH,',
+            '123,11/10/2017,"WITHDRAWAL ....",10.00,xxx,CASH,yyy'
         ].join("\n");
 
         expect(parseCSV(sampleData)).toEqual([
-            { "Bank Account": "123", "Date": '09/10/2017', "Notes": "Some comments" },
-            { "Bank Account": "123", "Date": '07/11/2017', "Notes": "Other comments" }
+            {
+                'Bank Account':'123',
+                'Date':'09/10/2017',
+                'Narrative':'WITHDRAWAL ....',
+                'Debit Amount':'70.00',
+                'Credit Amount':'',
+                'Categories':'CASH',
+                'Serial':''
+            },
+            {
+                'Bank Account':'123',
+                'Date':'11/10/2017',
+                'Narrative':'WITHDRAWAL ....',
+                'Debit Amount':'10.00',
+                'Credit Amount':'xxx',
+                'Categories':'CASH',
+                'Serial':'yyy'
+            }
         ]);
     });
 

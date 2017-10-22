@@ -2,7 +2,7 @@ module Upload.Main exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (class)
-import Html.Events exposing (onClick)
+import Html.Events exposing (onClick, onInput)
 import Http
 import Json.Decode as JD
 import Json.Encode as JE
@@ -17,6 +17,7 @@ type alias Model =
 
 type Msg
     = Noop
+    | EnterCSV String
     | TriggerDataSent
     | DataPostage (Result Http.Error String)
     | GoToHome
@@ -51,6 +52,9 @@ update msg model =
         DataPostage (Err _) ->
             ( { model | uploadError = Just "Error" }, Cmd.none )
 
+        EnterCSV txt ->
+            ( { model | text = txt }, Cmd.none )
+
         GoToHome ->
             ( model, Navigation.newUrl "#" )
 
@@ -69,7 +73,11 @@ view : Model -> Html Msg
 view model =
     div [ class "csv-input" ]
         [ h3 [] [ text "Please, paste the CSV data here:" ]
-        , textarea [ class "csv-input__source" ] []
+        , textarea
+            [ class "csv-input__source"
+            , onInput EnterCSV
+            ]
+            []
         , (renderUploadError model.uploadError)
         , div
             [ class "csv-input__action-bar" ]
