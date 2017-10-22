@@ -1,3 +1,4 @@
+var Msg = require('../messages');
 var saveCSV = require('./api.csv');
 
 describe('Logic for /api/csv', () => {
@@ -15,7 +16,7 @@ describe('Logic for /api/csv', () => {
             .run({ model: mockedModel, requestBody: {} })
             .fork(
                 err => {
-                    expect(err).toBe('`csv` field is empty of missing');
+                    expect(err).toBe(Msg.api.csv.missingData);
                     expect(mockedModel.save.mock.calls.length).toBe(0);
                 },
                 successFn
@@ -28,7 +29,7 @@ describe('Logic for /api/csv', () => {
             .run({ model: mockedModel, requestBody: { csv: '' } })
             .fork(
                 err => {
-                    expect(err).toBe('`csv` field is empty of missing');
+                    expect(err).toBe(Msg.api.csv.missingData);
                     expect(mockedModel.save.mock.calls.length).toBe(0);
                 },
                 successFn

@@ -2,6 +2,7 @@ var parseCSV = require('../service/csvParser');
 var Reader = require('fantasy-readers');
 var Task = require('data.task');
 var Either = require('data.either');
+var Msg = require('../messages');
 
 const saveCSV = () =>
 validateRequest()
@@ -11,8 +12,8 @@ validateRequest()
 
 /// - eitherToTask :: Either e a -> Task e a
 const eitherToTask = e => e.cata({
-Left: Task.rejected,
-Right: Task.of
+  Left: Task.rejected,
+  Right: Task.of
 });
 
 /// - validateRequest :: Reader Env (Either String String)
@@ -20,7 +21,7 @@ const validateRequest = () =>
 new Reader(env =>
   env.requestBody.csv && env.requestBody.csv.length
     ? Either.Right(env.requestBody.csv)
-    : Either.Left('`csv` field is empty of missing')
+    : Either.Left(Msg.api.csv.missingData)
 );
 
 /// - parseCSVText :: Either String String -> Either String Data
@@ -43,7 +44,7 @@ new Reader(env =>
   eitherToTask(eitherErrModel)
     .chain(model =>
       new Task((rej, res) =>
-        model.save((err) => err ? rej(err.message) : res('Saved'))
+        model.save((err, data) => err ? rej(err.message) : res({id: data._id}))
       )
     )
   );

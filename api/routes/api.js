@@ -18,7 +18,7 @@ router.post('/csv', jsonParser, (req, res, next) => {
     })
     .fork(
       err => res.status(500).json({ error: err }),
-      result => res.json({ result: result })
+      result => res.json(result)
     );
 
 });
