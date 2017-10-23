@@ -27,14 +27,14 @@ postCSVData : String -> Cmd Msg
 postCSVData csvString =
     let
         url =
-            "http://localhost:3000/api/csv"
+            "http://localhost:3000/api/uploads"
 
         reqBody =
             Http.jsonBody <|
                 JE.object
                     [ ( "csv", JE.string csvString ) ]
     in
-        Http.send DataPostage <| Http.post url reqBody JD.string
+        Http.send DataPostage <| Http.post url reqBody (JD.field "id" JD.string)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -46,11 +46,11 @@ update msg model =
         DataPostage (Ok data) ->
             ( { model | text = data }, Cmd.none )
 
-        TriggerDataSent ->
-            ( model, (postCSVData model.text) )
-
         DataPostage (Err _) ->
             ( { model | uploadError = Just "Error" }, Cmd.none )
+
+        TriggerDataSent ->
+            ( model, (postCSVData model.text) )
 
         EnterCSV txt ->
             ( { model | text = txt }, Cmd.none )

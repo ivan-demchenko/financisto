@@ -1,8 +1,9 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var UserData = new Schema({
+var UserDataSchema = new Schema({
+    uploadDate: Date,
     data: {}
 });
 
-module.exports = mongoose.model('UserData', UserData);
+module.exports = mongoose.model('UserData', UserDataSchema);
