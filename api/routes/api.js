@@ -1,15 +1,14 @@
-var debug = require('debug')('financisto:api-router');
-var express = require('express');
-var router = express.Router();
-var bodyParser = require('body-parser');
-var jsonParser = bodyParser.json({ type: 'application/json'});
-var UserData = require('../models/userData');
-var parseAndStoreData = require('./api.post.uploads');
-var findData = require('./api.get.uploads');
+const debug = require('debug')('financisto:api-router');
+const express = require('express');
+const router = express.Router();
+const bodyParser = require('body-parser');
+const jsonParser = bodyParser.json({ type: 'application/json'});
+const UserData = require('../models/userData');
+const parseAndStoreData = require('./api.post.uploads');
+const findData = require('./api.get.uploads');
 
 // GET:api/uploads :: Rq { } -> Rs String List Model
-router.get('/uploads', jsonParser, (req, res, next) => {
-
+router.get('/uploads', jsonParser, (req, res) => {
   debug('GET : api/uploads');
 
   findData()
@@ -20,25 +19,22 @@ router.get('/uploads', jsonParser, (req, res, next) => {
       error => res.status(500).send(error),
       data => res.json(data)
     );
-
 });
 
 
 // POST:api/uploads :: Rq { csv: String } -> Rs String { id: String }
-router.post('/uploads', jsonParser, (req, res, next) => {
-
+router.post('/uploads', jsonParser, (req, res) => {
   debug('POST : api/uploads:\n%s', req.body.csv);
 
   parseAndStoreData()
     .run({
       model: new UserData(),
-      requestBody: req.body
+      requestBody: req.body,
     })
     .fork(
       err => res.status(500).json({ error: err }),
       result => res.json(result)
     );
-
 });
 
 module.exports = router;

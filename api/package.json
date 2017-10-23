@@ -46,7 +46,23 @@
       "NODE_ENV": "development"
     }
   },
+  "eslintConfig": {
+    "parserOptions": {
+      "ecmaVersion": 6
+    },
+    "env": {
+      "node": true,
+      "jest": true
+    },
+    "extends": "eslint:recommended",
+    "rules": {
+      "indent": [2, 2]
+    }
+  },
   "devDependencies": {
+    "eslint": "^4.9.0",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.8.0",
     "supertest": "^3.0.0"
   }
 }
