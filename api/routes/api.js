@@ -4,14 +4,13 @@ const router = express.Router();
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json({ type: 'application/json'});
 const UserData = require('../models/userData');
-const parseAndStoreData = require('./api.post.uploads');
-const findData = require('./api.get.uploads');
+const { appendNewRecords, readPreviousUpload } = require('./lib');
 
 // GET:api/uploads :: Rq { } -> Rs String List Model
 router.get('/uploads', jsonParser, (req, res) => {
   debug('GET : api/uploads');
 
-  findData()
+  readPreviousUpload()
     .run({
       model: UserData
     })
@@ -21,12 +20,11 @@ router.get('/uploads', jsonParser, (req, res) => {
     );
 });
 
-
 // POST:api/uploads :: Rq { csv: String } -> Rs String { id: String }
 router.post('/uploads', jsonParser, (req, res) => {
   debug('POST : api/uploads:\n%s', req.body.csv);
 
-  parseAndStoreData()
+  appendNewRecords()
     .run({
       model: new UserData(),
       requestBody: req.body,
@@ -34,7 +32,7 @@ router.post('/uploads', jsonParser, (req, res) => {
     .fork(
       err => res.status(500).json({ error: err }),
       result => res.json(result)
-    );
+    )
 });
 
 module.exports = router;
