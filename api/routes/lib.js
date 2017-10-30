@@ -4,7 +4,7 @@ const Task = require('data.task');
 const Either = require('data.either');
 const Msg = require('../messages');
 const mergeRecords = require('../service/mergeRecords');
-const { curry } = require('ramda');
+const { objOf, prop, compose, lift, composeK } = require('ramda');
 
 // -- type RequestBody = { csv : string }
 // -- type Env = { model : MongooseModel, requestBody : RequestBody }
@@ -23,11 +23,7 @@ const validateRequest = () =>
 //  -- populateModel :: Task String Data -> Reader Env (Task String MongooseModel)
 const populateModel = (taskErrData) =>
   new Reader(env =>
-    taskErrData
-      .map(data => {
-        env.model.data = data;
-        return env.model;
-      })
+    taskErrData.map(data => new env.model({ data: data }))
   );
 
 // -- saveModel :: Task String MongooseModel -> Reader Env (Task String String)
@@ -35,8 +31,10 @@ const updateModel = (taskErrModel) =>
   new Reader(() =>
     taskErrModel
       .chain(model =>
-        new Task((rej, res) =>
-          model.update((err, data) => err ? rej(err.message) : res({id: data._id}))
+        new Task((reject, resolve) =>
+          model.save()
+            .then(compose(resolve, objOf('id'), prop('_id')))
+            .catch(compose(reject, prop('message')))
         )
       )
   );
@@ -45,29 +43,19 @@ const updateModel = (taskErrModel) =>
 const readPreviousUpload = () =>
   new Reader(env =>
     new Task((rej, res) =>
-      env.model.find((err, data) => {
-        if (err) { rej(err.message) }
-        res(data)
-      })
+      env.model.find().then(res).catch(compose(rej, prop('message')))
     )
   );
 
-// const lift2 = curry((f, a, b) =>
-//   b.ap(a.map(f)));
+const parseCSVText = (eitherErrStr) =>
+  eitherErrStr.map(parseCSV)
 
 const appendNewRecords =
-  validateRequest()  // Reader Env (Either Err String)
-    .map(eitherErrData => eitherErrData.map(parseCSV))  // Reader Env (Either Err Data)
-    .map(eitherToTask)  // Reader Env (Task Err Data)
-    .chain(taskErrIncoming =>  // Task Err Data
-      readPreviousUpload()  // Reader Env (Task Err Data)
-        .map(taskErrPrev =>  // Task String Data
-          // lift2(mergeRecords, taskErrPrev, taskErrIncoming)
-          taskErrPrev.chain(prev =>
-            taskErrIncoming.map(inc => mergeRecords(prev, inc))
-          )
-        )
-    )
+  lift(lift(mergeRecords))(
+    readPreviousUpload(),   // Reader Env (Task Err Data)
+    validateRequest()       // Reader Env (Either Err String)
+      .map(compose(eitherToTask, parseCSVText))  // Reader Env (Either Err Data)
+  ).chain(composeK(populateModel, updateModel));
 
 module.exports = {
   validateRequest,

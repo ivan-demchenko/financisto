@@ -24,9 +24,9 @@ router.get('/uploads', jsonParser, (req, res) => {
 router.post('/uploads', jsonParser, (req, res) => {
   debug('POST : api/uploads:\n%s', req.body.csv);
 
-  appendNewRecords()
+  appendNewRecords
     .run({
-      model: new UserData(),
+      model: UserData,
       requestBody: req.body,
     })
     .fork(

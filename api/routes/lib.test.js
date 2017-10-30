@@ -8,7 +8,7 @@ describe('Logic for /api/csv', () => {
 
   beforeEach(() => {
     mockedModel = {
-      find: (cb) => cb(null, [{a: 1}, {a: 2}]),
+      find: () => Promise.resolve([{a: 1}, {a: 2}]),
       update: jest.fn()
     };
   });
