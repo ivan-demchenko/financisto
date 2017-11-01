@@ -20,7 +20,7 @@ const validateRequest = () =>
       : Either.Left(Msg.api.csv.missingData)
   );
 
-//  -- populateModel :: Data -> ReaderT Env (Task String MongooseModel)
+//  -- populateModel :: Data -> ReaderT Env (Task String) MongooseModel
 const populateModel = (data) =>
   Reader.ReaderT(Task)(env =>
     new Task((reject, resolve) =>
@@ -28,7 +28,7 @@ const populateModel = (data) =>
     )
   );
 
-// -- saveModel :: MongooseModel -> ReaderT Env (Task String String)
+// -- saveModel :: MongooseModel -> ReaderT Env (Task String) String
 const updateModel = (model) =>
   Reader.ReaderT(Task)(() =>
     new Task((reject, resolve) =>
@@ -38,7 +38,7 @@ const updateModel = (model) =>
     )
   );
 
-// -- readPreviousUpload :: ReaderT Env (Task String Data)
+// -- readPreviousUpload :: ReaderT Env (Task String) Data
 const readPreviousUpload = () =>
   Reader.ReaderT(Task)(env =>
     new Task((rej, res) =>
@@ -49,14 +49,14 @@ const readPreviousUpload = () =>
   );
 
 const appendNewRecords =
-  validateRequest() // ReaderT Env (Either Err String)
-    .map(parseCSV) // ReaderT Env (Either Err IncomingData)
+  validateRequest() // ReaderT Env (Either Err) String
+    .map(parseCSV) // ReaderT Env (Either Err) IncomingData
     .chain(data => // Data
-      readPreviousUpload() // ReaderT Env (Task Err ExistingData)
-        .map(mergeRecords(data)) // ReaderT Env (Either Err MergedData)
+      readPreviousUpload() // ReaderT Env (Task Err) ExistingData
+        .map(mergeRecords(data)) // ReaderT Env (Either Err) MergedData
     )
-    .chain(populateModel) // ReaderT Env (Either Err MongooseModel)
-    .chain(updateModel) // ReaderT Env (Either Err { id: String })
+    .chain(populateModel) // ReaderT Env (Either Err) MongooseModel
+    .chain(updateModel) // ReaderT Env (Either Err) { id: String }
 
 module.exports = {
   validateRequest,
