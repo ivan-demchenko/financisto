@@ -1,5 +1,8 @@
 var Msg = require('../messages');
-var { appendNewRecords } = require('./lib');
+var Either = require('data.either');
+var Task = require('data.task');
+var Reader = require('fantasy-readers');
+var { appendNewRecords, readerEither2ReaderTask, eitherToTask } = require('./lib');
 var csvParser = require('../service/csvParser');
 
 describe('Logic for /api/csv', () => {
@@ -95,15 +98,15 @@ describe('Logic for /api/csv', () => {
     });
 
     it('should fail if saving the model was unsuccessful but read was good', () => {
-      const failedMsg = new Error('Failed to save model');
+      const failedError = new Error('Failed to save model');
       const successFn = jest.fn();
       mockedModel.findOne.mockReturnValueOnce(Promise.resolve([{a: 1}]));
-      mockedModel.save.mockReturnValueOnce(Promise.reject(failedMsg));
+      mockedModel.save.mockReturnValueOnce(Promise.reject(failedError));
       appendNewRecords
         .run({ model: mockedModel, requestBody: { csv: 'a,b\n1,2' } })
         .fork(
           err => {
-            expect(err).toBe(failedMsg.message);
+            expect(err).toBe(failedError.message);
             expect(mockedModel.update.mock.calls.length).toBe(0);
           },
           successFn
@@ -111,6 +114,81 @@ describe('Logic for /api/csv', () => {
       expect(successFn.mock.calls.length).toBe(0);
     });
 
+  });
+
+});
+
+describe('Monad Transformer Natural Transformation', () => {
+
+  const ReaderEither = Reader.ReaderT(Either);
+
+  test('naturally transform Either to Task inside ReaderT', () => {
+    ReaderEither(env => Either.Right(env.x))
+      .chain(xFromEither => {
+        expect(xFromEither).toBe(10);
+        return Reader.ReaderT(Task)(() => Task.of(xFromEither))
+      })
+      .run({ x: 10 })
+      .fork(e => e, x => expect(x).toBe(10));
+  });
+
+  test('readerT of either', () => {
+    const x = ReaderEither.of(100).run()
+    expect(x.toString()).toBe("Either.Right(100)");
+  });
+
+  test('check the type', () => {
+    const rdr = ReaderEither(env => env.x >= 10 ? Either.Right('Good') : Either.Left('Bad'));
+    expect(rdr.run({x: 5}).toString()).toBe('Either.Left(Bad)')
+    expect(rdr.run({x: 15}).toString()).toBe('Either.Right(Good)')
+  });
+
+  test('fold on readerEither', () => {
+    const rdr = ReaderEither(env => env.x >= 10 ? Either.Right('Good') : Either.Left('Bad'));
+    const r1 = rdr.run({ x: 20 });
+    expect(r1.fold).toBeInstanceOf(Function);
+    const r2 = r1.fold(Task.rejected, Task.of);
+    expect(r2).toBeInstanceOf(Task);
+  });
+
+  test('task should be resolved if transformed from Either.Right', () => {
+    const rdrEither = ReaderEither(env => env.x >= 10 ? Either.Right('Good') : Either.Left('Bad'));
+
+    const r1 = ReaderEither.ask.chain(env =>
+      readerEither2ReaderTask(env)(rdrEither)
+    ).run({ x: 20 });
+
+    expect(r1).toBeInstanceOf(Task);
+    expect(r1.fork).toBeInstanceOf(Function); 
+
+    const rejFn = jest.fn();
+    const resFn = jest.fn();
+
+    r1.fork(rejFn, resFn);
+
+    expect(rejFn.mock.calls.length).toBe(0);
+    expect(resFn.mock.calls.length).toBe(1);
+    expect(resFn.mock.calls[0]).toEqual(['Good']);
+  });
+
+  test('task should be rejected if transformed from Either.Left', () => {
+    const rdrEither = ReaderEither(env => env.x >= 10 ? Either.Right('Good') : Either.Left('Bad'));
+
+    const r1 = ReaderEither.ask.chain(env =>
+      readerEither2ReaderTask(env)(rdrEither)
+    ).run({ x: 5 });
+
+    expect(r1).toBeInstanceOf(Task);
+    expect(r1.fork).toBeInstanceOf(Function); 
+
+    const rejFn = jest.fn();
+    const resFn = jest.fn();
+
+    r1.fork(rejFn, resFn);
+
+    expect(rejFn.mock.calls.length).toBe(1);
+    expect(rejFn.mock.calls[0]).toEqual(['Bad']);
+    expect(resFn.mock.calls.length).toBe(0);
   });
 
 });

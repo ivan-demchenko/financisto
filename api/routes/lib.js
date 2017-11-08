@@ -10,11 +10,14 @@ const { objOf, prop, compose } = require('ramda');
 // -- type Env = { model : MongooseModel, requestBody : RequestBody }
 
 // -- eitherToTask :: Either e a -> Task e a
-const eitherToTask = e => e.fold(Task.rejected, Task.of);
+const eitherToTask = either => either.fold(Task.rejected, Task.of);
+
+const ReaderEither = Reader.ReaderT(Either);
+const ReaderTask = Reader.ReaderT(Task);
 
 // -- validateRequest :: ReaderT Env (Either String String)
 const validateRequest = () =>
-  Reader.ReaderT(Either)(env =>
+  ReaderEither(env =>
     env.requestBody.csv && env.requestBody.csv.length
       ? Either.Right(env.requestBody.csv)
       : Either.Left(Msg.api.csv.missingData)
@@ -22,7 +25,7 @@ const validateRequest = () =>
 
 //  -- populateModel :: Data -> ReaderT Env (Task String) MongooseModel
 const populateModel = (data) =>
-  Reader.ReaderT(Task)(env =>
+  ReaderTask(env =>
     new Task((reject, resolve) =>
       resolve(new env.model({ data: data }))
     )
@@ -30,7 +33,7 @@ const populateModel = (data) =>
 
 // -- saveModel :: MongooseModel -> ReaderT Env (Task String) String
 const updateModel = (model) =>
-  Reader.ReaderT(Task)(() =>
+  ReaderTask(() =>
     new Task((reject, resolve) =>
       model.save()
         .then(compose(resolve, objOf('id'), prop('_id')))
@@ -40,7 +43,7 @@ const updateModel = (model) =>
 
 // -- readPreviousUpload :: ReaderT Env (Task String) Data
 const readPreviousUpload = () =>
-  Reader.ReaderT(Task)(env =>
+  ReaderTask(env =>
     new Task((rej, res) =>
       env.model.findOne()
         .then(compose(res, prop('data')))
@@ -48,12 +51,20 @@ const readPreviousUpload = () =>
     )
   );
 
+// -- readerEither2ReaderTask :: ReaderT Env (Either e) a -> ReaderT Env (Task e) a
+const readerEither2ReaderTask = env => readerEither =>
+  ReaderTask(() => eitherToTask(readerEither.run(env)))
+
 const appendNewRecords =
-  validateRequest() // ReaderT Env (Either Err) String
-    .map(parseCSV) // ReaderT Env (Either Err) IncomingData
-    .chain(data => // Data
+  ReaderEither.ask.chain(env => // ReaderT Env (Either ()) Env
+    readerEither2ReaderTask(env)(
+      validateRequest() // ReaderT Env (Either Err) String
+        .map(parseCSV) // ReaderT Env (Either Err) IncomingData
+    ) // ReaderT Env (Task Err) IncomingData
+  )
+    .chain(incomingData => // IncomingData
       readPreviousUpload() // ReaderT Env (Task Err) ExistingData
-        .map(mergeRecords(data)) // ReaderT Env (Either Err) MergedData
+        .map(mergeRecords(incomingData)) // ReaderT Env (Task Err) MergedData
     )
     .chain(populateModel) // ReaderT Env (Either Err) MongooseModel
     .chain(updateModel) // ReaderT Env (Either Err) { id: String }
@@ -64,5 +75,6 @@ module.exports = {
   updateModel,
   readPreviousUpload,
   eitherToTask,
-  appendNewRecords
+  appendNewRecords,
+  readerEither2ReaderTask
 };
