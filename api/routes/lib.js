@@ -4,7 +4,7 @@ const Task = require('data.task');
 const Either = require('data.either');
 const Msg = require('../messages');
 const mergeRecords = require('../service/mergeRecords');
-const { objOf, prop, compose } = require('ramda');
+const { objOf, prop, compose, composeK } = require('ramda');
 
 // -- type RequestBody = { csv : string }
 // -- type Env = { model : MongooseModel, requestBody : RequestBody }
@@ -26,20 +26,20 @@ const validateRequest = () =>
 //  -- populateModel :: Data -> ReaderT Env (Task String) MongooseModel
 const populateModel = (data) =>
   ReaderTask(env =>
-    new Task((reject, resolve) =>
-      resolve(new env.model({ data: data }))
-    )
+    Task.of(new env.model({ data: data }))
   );
 
 // -- saveModel :: MongooseModel -> ReaderT Env (Task String) String
-const updateModel = (model) =>
+const saveModel = (modelInstance) =>
   ReaderTask(() =>
-    new Task((reject, resolve) =>
-      model.save()
+    new Task((reject, resolve) => {
+      return modelInstance.save()
         .then(compose(resolve, objOf('id'), prop('_id')))
         .catch(compose(reject, prop('message')))
-    )
+    })
   );
+
+const populateAndSaveModel = composeK(saveModel, populateModel);
 
 // -- readPreviousUpload :: ReaderT Env (Task String) Data
 const readPreviousUpload = () =>
@@ -66,13 +66,12 @@ const appendNewRecords =
       readPreviousUpload() // ReaderT Env (Task Err) ExistingData
         .map(mergeRecords(incomingData)) // ReaderT Env (Task Err) MergedData
     )
-    .chain(populateModel) // ReaderT Env (Either Err) MongooseModel
-    .chain(updateModel) // ReaderT Env (Either Err) { id: String }
+    .chain(populateAndSaveModel) // ReaderT Env (Either Err) { id: String }
 
 module.exports = {
   validateRequest,
   populateModel,
-  updateModel,
+  saveModel,
   readPreviousUpload,
   eitherToTask,
   appendNewRecords,

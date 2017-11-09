@@ -36,6 +36,7 @@ describe('Logic for /api/csv', () => {
     it('should merge parsed CSV data with the existing data', () => {
       const failureFn = jest.fn();
       const mockedCSV = 'q,w\n1,2\n4,5'
+      const parsedMockedCVS = csvParser(mockedCSV);
       mockedModel.findOne.mockReturnValueOnce(Promise.resolve([{a: 1}, {a: 2}]))
       appendNewRecords
         .run({
@@ -47,7 +48,7 @@ describe('Logic for /api/csv', () => {
         .fork(
           failureFn,
           (data) => {
-            expect(data).toEqual([{a: 1}, {a: 2}].concat(csvParser(mockedCSV)))
+            expect(data).toEqual([{a: 1}, {a: 2}].concat(parsedMockedCVS))
           }
         );
       expect(failureFn.mock.calls.length).toBe(0);
