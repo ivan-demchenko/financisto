@@ -8,7 +8,7 @@ const { appendNewRecords, readPreviousUpload } = require('./lib');
 
 // GET:api/uploads :: Rq { } -> Rs String List Model
 router.get('/uploads', jsonParser, (req, res) => {
-  debug('GET : api/uploads');
+  debug('GET\tapi/uploads');
 
   readPreviousUpload()
     .run({
@@ -22,7 +22,7 @@ router.get('/uploads', jsonParser, (req, res) => {
 
 // POST:api/uploads :: Rq { csv: String } -> Rs String { id: String }
 router.post('/uploads', jsonParser, (req, res) => {
-  debug('POST : api/uploads:\n%s', req.body.csv);
+  debug('POST\tapi/uploads:\n%s', req.body.csv);
 
   appendNewRecords
     .run({

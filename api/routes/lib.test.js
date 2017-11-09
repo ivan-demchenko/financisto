@@ -2,7 +2,7 @@ var Msg = require('../messages');
 var Either = require('data.either');
 var Task = require('data.task');
 var Reader = require('fantasy-readers');
-var { appendNewRecords, readerEither2ReaderTask, eitherToTask } = require('./lib');
+var { appendNewRecords, readerEither2ReaderTask } = require('./lib');
 var csvParser = require('../service/csvParser');
 
 describe('Logic for /api/csv', () => {
@@ -10,11 +10,21 @@ describe('Logic for /api/csv', () => {
   let mockedModel;
 
   beforeEach(() => {
-    mockedModel = {
-      findOne: jest.fn(), //() => Promise.resolve([{a: 1}, {a: 2}]),
-      save: jest.fn(),
-      update: jest.fn()
-    };
+    const findOneMock = jest.fn();
+    const saveMock = jest.fn();
+    const updateMock = jest.fn();
+
+    function MockedModel() {
+      this.findOne = findOneMock;
+      this.save = saveMock;
+      this.update = updateMock;
+    }
+
+    MockedModel.findOne = findOneMock;
+    MockedModel.save = saveMock;
+    MockedModel.update = updateMock;
+
+    mockedModel = MockedModel;
   });
 
   afterEach(() => {
