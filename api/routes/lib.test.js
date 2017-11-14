@@ -11,18 +11,17 @@ describe('Logic for /api/csv', () => {
 
   beforeEach(() => {
     const findOneMock = jest.fn();
-    const saveMock = jest.fn();
-    const updateMock = jest.fn();
+    const findOneAndUpdateMock = jest.fn((a, b, c, cb) => {
+      cb(null, []);
+    });
 
     function MockedModel() {
       this.findOne = findOneMock;
-      this.save = saveMock;
-      this.update = updateMock;
+      this.findOneAndUpdate = findOneAndUpdateMock;
     }
 
     MockedModel.findOne = findOneMock;
-    MockedModel.save = saveMock;
-    MockedModel.update = updateMock;
+    MockedModel.findOneAndUpdate = findOneAndUpdateMock;
 
     mockedModel = MockedModel;
   });
@@ -37,7 +36,11 @@ describe('Logic for /api/csv', () => {
       const failureFn = jest.fn();
       const mockedCSV = 'q,w\n1,2\n4,5'
       const parsedMockedCVS = csvParser(mockedCSV);
-      mockedModel.findOne.mockReturnValueOnce(Promise.resolve([{a: 1}, {a: 2}]))
+      mockedModel.findOne.mockReturnValueOnce(Promise.resolve([{a: 1}, {a: 2}]));
+      mockedModel.findOneAndUpdate.mockImplementation((a, upd, c, cb) => {
+        cb(null, [{a: 1}, {a: 2}].concat(upd));
+      });
+
       appendNewRecords
         .run({
           model: mockedModel,
@@ -60,13 +63,17 @@ describe('Logic for /api/csv', () => {
 
     it('should fail if the request body is empty', () => {
       const successFn = jest.fn();
-      mockedModel.findOne.mockReturnValueOnce(Promise.resolve([{a: 1}, {a: 2}]))
+      mockedModel.findOne.mockReturnValueOnce(Promise.resolve([{a: 1}, {a: 2}]));
+      mockedModel.findOneAndUpdate.mockImplementation((a, upd, c, cb) => {
+        cb(null, [{a: 1}, {a: 2}].concat(upd));
+      });
       appendNewRecords
         .run({ model: mockedModel, requestBody: {} })
         .fork(
           err => {
             expect(err).toBe(Msg.api.csv.missingData);
-            expect(mockedModel.update.mock.calls.length).toBe(0);
+            expect(mockedModel.findOne.mock.calls.length).toBe(0);
+            expect(mockedModel.findOneAndUpdate.mock.calls.length).toBe(0);
           },
           successFn
         );
@@ -75,13 +82,17 @@ describe('Logic for /api/csv', () => {
 
     it('should fail if `csv` is empty within request body', () => {
       const successFn = jest.fn();
-      mockedModel.findOne.mockReturnValueOnce(Promise.resolve([{a: 1}, {a: 2}]))
+      mockedModel.findOne.mockReturnValueOnce(Promise.resolve([{a: 1}, {a: 2}]));
+      mockedModel.findOneAndUpdate.mockImplementation((a, upd, c, cb) => {
+        cb(null, [{a: 1}, {a: 2}].concat(upd));
+      });
       appendNewRecords
         .run({ model: mockedModel, requestBody: { csv: '' } })
         .fork(
           err => {
             expect(err).toBe(Msg.api.csv.missingData);
-            expect(mockedModel.update.mock.calls.length).toBe(0);
+            expect(mockedModel.findOne.mock.calls.length).toBe(0);
+            expect(mockedModel.findOneAndUpdate.mock.calls.length).toBe(0);
           },
           successFn
         );
@@ -96,6 +107,9 @@ describe('Logic for /api/csv', () => {
       const failedMsg = new Error('Failed to read from model');
       const successFn = jest.fn();
       mockedModel.findOne.mockReturnValueOnce(Promise.reject(failedMsg))
+      mockedModel.findOneAndUpdate.mockImplementation((a, upd, c, cb) => {
+        cb(new Error('Failed to execute'), null);
+      });
       appendNewRecords
         .run({ model: mockedModel, requestBody: { csv: 'a,b\n1,2' } })
         .fork(
@@ -111,8 +125,10 @@ describe('Logic for /api/csv', () => {
     it('should fail if saving the model was unsuccessful but read was good', () => {
       const failedError = new Error('Failed to save model');
       const successFn = jest.fn();
-      mockedModel.findOne.mockReturnValueOnce(Promise.resolve([{a: 1}]));
-      mockedModel.save.mockReturnValueOnce(Promise.reject(failedError));
+      mockedModel.findOne.mockReturnValueOnce(Promise.reject(failedError))
+      mockedModel.findOneAndUpdate.mockImplementation((a, upd, c, cb) => {
+        cb(failedError, null);
+      });
       appendNewRecords
         .run({ model: mockedModel, requestBody: { csv: 'a,b\n1,2' } })
         .fork(
