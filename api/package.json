@@ -22,7 +22,7 @@
     "fantasy-readers": "git+https://git@github.com/fantasyland/fantasy-readers.git",
     "jest": "^22.4.3",
     "mongodb": "^3.0.7",
-    "mongoose": "^5.0.17",
+    "mongoose": "^5.7.5",
     "morgan": "~1.9.0",
     "nodemon": "^1.17.4",
     "ramda": "^0.25.0"
